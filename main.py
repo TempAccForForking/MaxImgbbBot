@@ -9,6 +9,7 @@ import pyromod.listen  # pylint: disable=unused-import
 from pyrogram import Client, filters
 from pyromod.helpers import ikb
 
+from random import randint
 
 from utils.configs import Tr, Var
 
@@ -34,7 +35,6 @@ START_BTN = ikb(
             ("📚 Help", "help"),
         ],
         [
-            ("👨‍💻 Developer", "https://bio.link/aminesoukara", "url"),
             ("❌", "close"),
         ],
     ]
@@ -91,17 +91,18 @@ async def cdata(c, q):
         await q.answer(wait)
 
         r = q.message.reply_to_message
+        rno = randint(100, 999)
 
-        filename = f"Main-{chat_id}"
+        filename = f"Main-{rno}"
 
         if r.document:
-            filename = f"Document-{chat_id}"
+            filename = f"Document-{rno}"
         elif r.photo:
-            filename = f"Photo-{chat_id}"
+            filename = f"Photo-{rno}"
         elif r.sticker:
-            filename = f"Sticker-{chat_id}"
+            filename = f"Sticker-{rno}"
         elif r.animation:
-            filename = f"Animation-{chat_id}"
+            filename = f"Animation-{rno}"
 
 
         tmp = os.path.join("downloads", str(chat_id))
@@ -126,13 +127,13 @@ async def cdata(c, q):
             return
 
         done = f"""
-🔗 LINK : `{image.url}`
+🔗 LINK : <code>{image.url}</code>
 
-📝 FILENAME : `{image.filename}`
+📝 FILENAME : {image.filename}
 
 💾 SIZE : {HumanBytes(image.size)}
 
-⚠️ DELETE URL : `{image.delete_url}`
+⚠️ DELETE URL : <code>{image.delete_url}</code>
 
 ⏳ EXPIRATION : {SecondsToText(int(image.expiration))}
 """
@@ -148,7 +149,7 @@ async def cdata(c, q):
             ]
         )
 
-        await q.message.reply(done, disable_web_page_preview=True, reply_markup=imgkb)
+        await q.message.reply(done, disable_web_page_preview=True, reply_markup=imgkb, parse_mode='HTMl')
         shutil.rmtree(tmp, ignore_errors=True)
 
     else:
